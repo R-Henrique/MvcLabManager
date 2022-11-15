@@ -3,7 +3,7 @@ using MvcLabManager.Models;
 
 namespace MvcLabManager.Controllers;
 
-public class ComputerController : Controller
+public class ComputerController : Controller 
 {
     private readonly LabManagerContext _context;
 
@@ -14,11 +14,10 @@ public class ComputerController : Controller
 
     public IActionResult Index()
     {
-        
         return View(_context.Computers);
     }
 
-    public IActionResult Show(int id )
+    public IActionResult Show(int id)
     {
         Computer computer = _context.Computers.Find(id);
 
@@ -27,7 +26,66 @@ public class ComputerController : Controller
             return NotFound();
         }
 
-        return View (computer);
+        return View(computer);
+    }
 
+   
+
+    public IActionResult Update (int id)
+    {
+        Computer computer = _context.Computers.Find(id);
+
+        if(computer == null)
+        {
+            return NotFound();
+        }
+
+        return View(computer);
+    }
+
+   
+     public IActionResult Update (int id, [FromForm] string ram, [FromForm] string processor)
+    {
+        Computer computer = _context.Computers.Find(id);
+
+        if(computer == null)
+        {
+            return NotFound();
+        }
+
+        computer.Ram = ram;
+        computer.Processor = processor;
+    
+        _context.Computers.Update(computer);
+        _context.SaveChanges();
+
+        return RedirectToAction("Index");
+    }
+
+    public IActionResult Delete (int id)
+    {
+        Computer computer = _context.Computers.Find(id);
+
+        if(computer == null)
+        {
+            return NotFound();
+        }
+
+        _context.Computers.Remove(computer);
+        _context.SaveChanges();
+
+        return View(computer);
+    }
+     public IActionResult Create (Computer computer)
+    {
+        if(!ModelState.IsValid) 
+        {
+             return View(computer);
+        }
+
+        _context.Computers.Add(computer);
+        _context.SaveChanges();   
+
+        return RedirectToAction("Index");
     }
 }
